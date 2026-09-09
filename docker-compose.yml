@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database with pgvector Extension
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: sih26108_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sih26108_standards
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_pgvector.sql:/docker-entrypoint-initdb.d/01_init_pgvector.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sih26108_standards"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. FastAPI Standards Intelligence Backend
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: sih26108_backend
+    restart: unless-stopped
+    environment:
+      PORT: 8000
+      DATABASE_URL: postgresql+psycopg://postgres:postgrespassword@postgres:5432/sih26108_standards
+      REPOSITORY_TYPE: ${REPOSITORY_TYPE:-json}
+      VECTOR_BACKEND: ${VECTOR_BACKEND:-faiss}
+      EMBEDDING_MODEL: paraphrase-multilingual-MiniLM-L12-v2
+      EMBEDDING_DIMENSION: 384
+      CROSS_ENCODER_MODEL: cross-encoder/ms-marco-MiniLM-L-6-v2
+      RERANK_ENABLED: "true"
+      RERANK_WEIGHT_BETA: "0.5"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # 3. React/Vite Nginx Production Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    container_name: sih26108_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    driver: local

@@ -1,0 +1,236 @@
+[
+  {
+    "id": "IS-10322-P5-S3",
+    "is_number": "IS 10322 (Part 5/Sec 3) : 2012",
+    "title": "Luminaires - Particular Requirements - Section 3: Luminaires for Road and Street Lighting",
+    "scope": "Specifies safety and performance requirements for luminaires used in road, highway, and street lighting applications using electric light sources, including LED arrays, operated on supply voltages up to 1000 V.",
+    "sector": "Electrotechnical",
+    "product_category": "Lighting & Luminaires",
+    "keywords": ["LED", "street light", "luminaire", "outdoor lighting", "municipal", "road lighting", "pole light", "50W", "wattage"],
+    "revision_year": 2012,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Primary standard for municipal and highway outdoor street lighting fixtures and LED luminaires.",
+    "amendments": [
+      {
+        "amendment_number": 1,
+        "year": 2016,
+        "title": "Amendment No. 1: Ingress Protection (IP66) and Surge Protection Guidelines"
+      }
+    ],
+    "related_standards": ["IS 16102 (Part 1) : 2012", "IS 16106 : 2012", "IS 15885 (Part 2/Sec 13) : 2012"]
+  },
+  {
+    "id": "IS-16102-P1",
+    "is_number": "IS 16102 (Part 1) : 2012",
+    "title": "Self-Ballasted LED Lamps for General Lighting Services - Part 1: Safety Requirements",
+    "scope": "Covers safety and interchangeability requirements together with test methods for self-ballasted LED lamps intended for domestic and similar general lighting purposes.",
+    "sector": "Electrotechnical",
+    "product_category": "Lighting & Luminaires",
+    "keywords": ["LED", "lamp", "ballast", "general lighting", "indoor", "safety", "bulb", "socket"],
+    "revision_year": 2012,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Safety requirements for self-ballasted LED bulbs and interior lighting lamps.",
+    "amendments": [],
+    "related_standards": ["IS 16106 : 2012", "IS 10322 (Part 5/Sec 3) : 2012"]
+  },
+  {
+    "id": "IS-16106",
+    "is_number": "IS 16106 : 2012",
+    "title": "Method of Electrical and Photometric Measurements of Solid-State Lighting (LED) Products",
+    "scope": "Provides standardized procedure for measuring total luminous flux, electrical power, luminous efficacy, and chromaticity of solid-state lighting (LED) products for outdoor and indoor applications.",
+    "sector": "Electrotechnical",
+    "product_category": "Testing & Measurement",
+    "keywords": ["photometric", "LED measurement", "luminous flux", "efficacy", "lux", "chromaticity", "solid state lighting"],
+    "revision_year": 2012,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Photometric testing standard for verifying luminous efficacy and power factor of LED products.",
+    "amendments": [],
+    "related_standards": ["IS 10322 (Part 5/Sec 3) : 2012", "IS 16102 (Part 1) : 2012"]
+  },
+  {
+    "id": "IS-15885-P2-S13",
+    "is_number": "IS 15885 (Part 2/Sec 13) : 2012",
+    "title": "Lamp Controlgear - Particular Requirements for DC or AC Supplied Electronic Controlgear for LED Modules",
+    "scope": "Specifies safety requirements for electronic controlgear (LED drivers) for use on DC supplies up to 250 V or AC supplies up to 1000 V at 50 Hz/60 Hz.",
+    "sector": "Electrotechnical",
+    "product_category": "Electrical Components",
+    "keywords": ["LED driver", "controlgear", "power supply", "transformer", "driver unit", "voltage", "current regulator"],
+    "revision_year": 2012,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Electronic controlgear and driver unit safety specification for LED luminaires.",
+    "amendments": [
+      {
+        "amendment_number": 1,
+        "year": 2017,
+        "title": "Amendment No. 1: Thermal and Voltage Protection Requirements"
+      }
+    ],
+    "related_standards": ["IS 10322 (Part 5/Sec 3) : 2012"]
+  },
+  {
+    "id": "IS-7098-P1",
+    "is_number": "IS 7098 (Part 1) : 1988",
+    "title": "Crosslinked Polyethylene Insulated PVC Sheathed Cables - Part 1: For Working Voltages Up to and Including 1100 V",
+    "scope": "Specifies requirements for armored and unarmored single-core, twin-core, and multi-core XLPE insulated cables for electricity supply in underground and outdoor power distribution networks.",
+    "sector": "Electrotechnical",
+    "product_category": "Cables & Wiring",
+    "keywords": ["XLPE cable", "PVC sheathed", "power cable", "armored cable", "1100V", "electrical conductor", "underground cable"],
+    "revision_year": 1988,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Underground armored XLPE insulated power cables up to 1.1 kV working voltage.",
+    "amendments": [
+      {
+        "amendment_number": 2,
+        "year": 2011,
+        "title": "Amendment No. 2: Conductor Resistance Tolerances"
+      }
+    ],
+    "related_standards": ["IS 694 : 2010"]
+  },
+  {
+    "id": "IS-694",
+    "is_number": "IS 694 : 2010",
+    "title": "Polyvinyl Chloride Insulated Unsheathed and Sheathed Cables/Cords for Working Voltages up to 1100 V",
+    "scope": "Covers requirements for single and multi-core PVC insulated copper and aluminum cables used for electrical wiring in industrial and residential installations.",
+    "sector": "Electrotechnical",
+    "product_category": "Cables & Wiring",
+    "keywords": ["PVC cable", "building wire", "copper conductor", "insulated cable", "flexible cord", "wiring"],
+    "revision_year": 2010,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "General building wiring and flexible PVC insulated cables for electrical installations.",
+    "amendments": [],
+    "related_standards": ["IS 7098 (Part 1) : 1988"]
+  },
+  {
+    "id": "IS-455",
+    "is_number": "IS 455 : 2015",
+    "title": "Portland Slag Cement - Specification",
+    "scope": "Covers manufacturing, physical and chemical requirements for Portland Slag Cement (PSC) manufactured by grinding Portland cement clinker and granulated blast furnace slag.",
+    "sector": "Civil Engineering",
+    "product_category": "Cement & Building Materials",
+    "keywords": ["Portland Slag Cement", "PSC", "clinker", "blast furnace slag", "concrete", "foundation", "structural cement", "mortar"],
+    "revision_year": 2015,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Portland Slag Cement specification for heavy structural concrete, foundations, and marine civil works.",
+    "amendments": [],
+    "related_standards": ["IS 1489 (Part 1) : 2015"]
+  },
+  {
+    "id": "IS-1489-P1",
+    "is_number": "IS 1489 (Part 1) : 2015",
+    "title": "Portland Pozzolana Cement - Specification - Part 1: Flyash Based",
+    "scope": "Specifies requirements for flyash based Portland Pozzolana Cement (PPC) used in reinforced concrete structures, masonry, and general civil construction works.",
+    "sector": "Civil Engineering",
+    "product_category": "Cement & Building Materials",
+    "keywords": ["PPC", "Portland Pozzolana Cement", "flyash cement", "concrete", "building construction", "compressive strength"],
+    "revision_year": 2015,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Flyash based Portland Pozzolana Cement for general civil construction and reinforced concrete.",
+    "amendments": [],
+    "related_standards": ["IS 455 : 2015"]
+  },
+  {
+    "id": "IS-4984",
+    "is_number": "IS 4984 : 2016",
+    "title": "High Density Polyethylene (HDPE) Pipes for Water Supply - Specification",
+    "scope": "Covers requirements for HDPE pipes ranging from 16 mm to 1000 mm nominal outer diameter for potable water supply, municipal drainage, and irrigation pipelines.",
+    "sector": "Civil & Water Resources",
+    "product_category": "Pipes & Fittings",
+    "keywords": ["HDPE pipe", "water supply", "potable water", "pipeline", "polyethylene", "drainage", "municipal water"],
+    "revision_year": 2016,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "High-density polyethylene pipes specification for municipal drinking water distribution networks.",
+    "amendments": [],
+    "related_standards": ["IS 12225 : 2019"]
+  },
+  {
+    "id": "IS-12225",
+    "is_number": "IS 12225 : 2019",
+    "title": "Submersible Pump Sets for Clear, Cold, Water - Specification",
+    "scope": "Covers design, constructional requirements, performance parameters, and testing methods for submersible pump sets driven by electric motors for agricultural and drinking water pumping.",
+    "sector": "Mechanical Engineering",
+    "product_category": "Pumps & Turbines",
+    "keywords": ["submersible pump", "water pump", "agricultural pumping", "borewell", "electric motor", "flow rate", "head pressure"],
+    "revision_year": 2019,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Submersible motor-driven pump sets for tube wells, borewells, and irrigation water extraction.",
+    "amendments": [],
+    "related_standards": ["IS 4984 : 2016"]
+  },
+  {
+    "id": "IS-14286",
+    "is_number": "IS 14286 : 2010",
+    "title": "Crystalline Silicon Terrestrial Photovoltaic (PV) Modules - Design Qualification and Type Approval",
+    "scope": "Specifies requirements for design qualification and type approval of terrestrial crystalline silicon photovoltaic (PV) modules suitable for long-term operation in open-air climates.",
+    "sector": "Renewable Energy",
+    "product_category": "Solar Energy",
+    "keywords": ["solar panel", "PV module", "photovoltaic", "crystalline silicon", "solar power", "renewable energy", "outdoor module"],
+    "revision_year": 2010,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Design qualification and outdoor operational performance standard for crystalline silicon solar PV panels.",
+    "amendments": [],
+    "related_standards": []
+  },
+  {
+    "id": "IS-1180-P1",
+    "is_number": "IS 1180 (Part 1) : 2014",
+    "title": "Outdoor Type Oil Immersed Distribution Transformers Up to and Including 2500 kVA, 33 kV - Specification",
+    "scope": "Covers requirements for three-phase oil-immersed distribution transformers used in outdoor power distribution systems up to 33 kV voltage level.",
+    "sector": "Electrotechnical",
+    "product_category": "Transformers",
+    "keywords": ["transformer", "distribution transformer", "oil immersed", "33kV", "kVA rating", "substation", "grid"],
+    "revision_year": 2014,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Oil-immersed step-down power distribution transformers up to 33 kV grid applications.",
+    "amendments": [
+      {
+        "amendment_number": 1,
+        "year": 2016,
+        "title": "Amendment No. 1: Energy Efficiency Level Ratings (Level 1, 2, 3)"
+      }
+    ],
+    "related_standards": ["IS 7098 (Part 1) : 1988"]
+  },
+  {
+    "id": "IS-15683",
+    "is_number": "IS 15683 : 2018",
+    "title": "Portable Fire Extinguishers - Performance and Construction - Specification",
+    "scope": "Specifies requirements for design, construction, charging, testing, and performance of portable fire extinguishers of water, foam, powder, and CO2 types.",
+    "sector": "Safety & Fire Protection",
+    "product_category": "Fire Safety",
+    "keywords": ["fire extinguisher", "portable extinguisher", "CO2 extinguisher", "dry powder", "fire safety", "building safety"],
+    "revision_year": 2018,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Design, pressure rating, and fire suppression performance standard for portable fire extinguishers.",
+    "amendments": [],
+    "related_standards": []
+  },
+  {
+    "id": "IS-2062",
+    "is_number": "IS 2062 : 2011",
+    "title": "Hot Rolled Medium and High Tensile Structural Steel - Specification",
+    "scope": "Covers requirements for steel plates, sections, flats, bars, and beams intended for use in structural construction of bridges, buildings, and industrial towers.",
+    "sector": "Metallurgical Engineering",
+    "product_category": "Structural Steel",
+    "keywords": ["structural steel", "hot rolled steel", "steel beam", "tensile strength", "bridge steel", "building frame"],
+    "revision_year": 2011,
+    "status": "Active (DEMO / SAMPLE DATA)",
+    "source_url": null,
+    "description": "Structural steel specification for bridge construction, high-rise buildings, and industrial frameworks.",
+    "amendments": [],
+    "related_standards": []
+  }
+]

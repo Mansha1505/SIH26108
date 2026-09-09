@@ -1,0 +1,233 @@
+[
+  {
+    "id": "eval_001",
+    "query": "100 kVA three phase distribution transformer",
+    "language": "en",
+    "domain": "Transformers",
+    "relevant_standard_ids": ["IS-1180-P1"],
+    "relevance": {
+      "IS-1180-P1": 2
+    },
+    "relevance_notes": "Primary standard for outdoor oil immersed distribution transformers up to 2500 kVA."
+  },
+  {
+    "id": "eval_002",
+    "query": "100 केवीए तीन फेज वितरण ट्रांसफार्मर",
+    "language": "hi",
+    "domain": "Transformers",
+    "relevant_standard_ids": ["IS-1180-P1"],
+    "relevance": {
+      "IS-1180-P1": 2
+    },
+    "relevance_notes": "Hindi Devanagari query for 100 kVA distribution transformer."
+  },
+  {
+    "id": "eval_003",
+    "query": "100 kVA ka three phase distribution transformer chahiye",
+    "language": "hi-Latn",
+    "domain": "Transformers",
+    "relevant_standard_ids": ["IS-1180-P1"],
+    "relevance": {
+      "IS-1180-P1": 2
+    },
+    "relevance_notes": "Hinglish transliterated procurement query for distribution transformer."
+  },
+  {
+    "id": "eval_004",
+    "query": "Electrical equipment required to step down medium voltage 11kV for local electricity distribution",
+    "language": "en",
+    "domain": "Transformers",
+    "relevant_standard_ids": ["IS-1180-P1"],
+    "relevance": {
+      "IS-1180-P1": 2
+    },
+    "relevance_notes": "Natural language conceptual semantic query describing distribution transformer functionality."
+  },
+  {
+    "id": "eval_005",
+    "query": "50W LED street light luminaire for municipal road lighting",
+    "language": "en",
+    "domain": "Lighting & Luminaires",
+    "relevant_standard_ids": ["IS-10322-P5-S3", "IS-16102-P1", "IS-15885-P2-S13"],
+    "relevance": {
+      "IS-10322-P5-S3": 2,
+      "IS-16102-P1": 1,
+      "IS-15885-P2-S13": 1
+    },
+    "relevance_notes": "Primary standard IS 10322-5-3 for street lighting luminaires; secondary standards for LED lamps and controlgear drivers."
+  },
+  {
+    "id": "eval_006",
+    "query": "50 वाट एलइडी स्ट्रीट लाइट ल्यूमिनेयर",
+    "language": "hi",
+    "domain": "Lighting & Luminaires",
+    "relevant_standard_ids": ["IS-10322-P5-S3", "IS-15885-P2-S13"],
+    "relevance": {
+      "IS-10322-P5-S3": 2,
+      "IS-15885-P2-S13": 1
+    },
+    "relevance_notes": "Hindi Devanagari query for 50W LED street luminaire."
+  },
+  {
+    "id": "eval_007",
+    "query": "50W ki LED street light luminaire chahiye road ke liye",
+    "language": "hi-Latn",
+    "domain": "Lighting & Luminaires",
+    "relevant_standard_ids": ["IS-10322-P5-S3", "IS-16102-P1"],
+    "relevance": {
+      "IS-10322-P5-S3": 2,
+      "IS-16102-P1": 1
+    },
+    "relevance_notes": "Hinglish query for LED street luminaire."
+  },
+  {
+    "id": "eval_008",
+    "query": "Photometric measurement procedure for luminous efficacy of solid state LED products",
+    "language": "en",
+    "domain": "Testing & Measurement",
+    "relevant_standard_ids": ["IS-16106", "IS-10322-P5-S3"],
+    "relevance": {
+      "IS-16106": 2,
+      "IS-10322-P5-S3": 1
+    },
+    "relevance_notes": "Primary standard IS 16106 for photometric LED measurements."
+  },
+  {
+    "id": "eval_009",
+    "query": "110 mm HDPE water pipe PN 10 for drinking water supply",
+    "language": "en",
+    "domain": "Pipes & Fittings",
+    "relevant_standard_ids": ["IS-4984"],
+    "relevance": {
+      "IS-4984": 2
+    },
+    "relevance_notes": "Primary standard for High Density Polyethylene (HDPE) water supply pipes."
+  },
+  {
+    "id": "eval_010",
+    "query": "110 मिमी एचडीपीई पानी का पाइप पीएन 10",
+    "language": "hi",
+    "domain": "Pipes & Fittings",
+    "relevant_standard_ids": ["IS-4984"],
+    "relevance": {
+      "IS-4984": 2
+    },
+    "relevance_notes": "Hindi Devanagari query for HDPE water supply pipe."
+  },
+  {
+    "id": "eval_011",
+    "query": "110 mm ka HDPE water pipe drinking water supply ke liye",
+    "language": "hi-Latn",
+    "domain": "Pipes & Fittings",
+    "relevant_standard_ids": ["IS-4984"],
+    "relevance": {
+      "IS-4984": 2
+    },
+    "relevance_notes": "Hinglish query for HDPE potable water pipe."
+  },
+  {
+    "id": "eval_012",
+    "query": "Portland Slag Cement for structural concrete and foundations",
+    "language": "en",
+    "domain": "Cement & Building Materials",
+    "relevant_standard_ids": ["IS-455", "IS-1489-P1"],
+    "relevance": {
+      "IS-455": 2,
+      "IS-1489-P1": 1
+    },
+    "relevance_notes": "Primary standard IS 455 for Portland Slag Cement; secondary IS 1489 for flyash PPC."
+  },
+  {
+    "id": "eval_013",
+    "query": "संरचनात्मक कंक्रीट के लिए पोर्टलैंड स्लैग सीमेंट",
+    "language": "hi",
+    "domain": "Cement & Building Materials",
+    "relevant_standard_ids": ["IS-455", "IS-1489-P1"],
+    "relevance": {
+      "IS-455": 2,
+      "IS-1489-P1": 1
+    },
+    "relevance_notes": "Hindi Devanagari query for Portland Slag Cement."
+  },
+  {
+    "id": "eval_014",
+    "query": "Structural construction ke liye Portland Slag Cement chahiye",
+    "language": "hi-Latn",
+    "domain": "Cement & Building Materials",
+    "relevant_standard_ids": ["IS-455", "IS-1489-P1"],
+    "relevance": {
+      "IS-455": 2,
+      "IS-1489-P1": 1
+    },
+    "relevance_notes": "Hinglish query for Portland Slag Cement."
+  },
+  {
+    "id": "eval_015",
+    "query": "XLPE insulated armored underground power cable 1.1 kV",
+    "language": "en",
+    "domain": "Cables & Wiring",
+    "relevant_standard_ids": ["IS-7098-P1", "IS-694"],
+    "relevance": {
+      "IS-7098-P1": 2,
+      "IS-694": 1
+    },
+    "relevance_notes": "Primary standard IS 7098-1 for XLPE insulated power cables up to 1100 V."
+  },
+  {
+    "id": "eval_016",
+    "query": "1.1 kV ke liye underground XLPE armored power cable",
+    "language": "hi-Latn",
+    "domain": "Cables & Wiring",
+    "relevant_standard_ids": ["IS-7098-P1", "IS-694"],
+    "relevance": {
+      "IS-7098-P1": 2,
+      "IS-694": 1
+    },
+    "relevance_notes": "Hinglish query for underground XLPE power cable."
+  },
+  {
+    "id": "eval_017",
+    "query": "Submersible pump set for agricultural tube well water extraction",
+    "language": "en",
+    "domain": "Pumps & Turbines",
+    "relevant_standard_ids": ["IS-12225", "IS-4984"],
+    "relevance": {
+      "IS-12225": 2,
+      "IS-4984": 1
+    },
+    "relevance_notes": "Primary standard IS 12225 for motor driven submersible pumps."
+  },
+  {
+    "id": "eval_018",
+    "query": "Crystalline silicon solar photovoltaic PV modules for terrestrial open air climate",
+    "language": "en",
+    "domain": "Solar Energy",
+    "relevant_standard_ids": ["IS-14286"],
+    "relevance": {
+      "IS-14286": 2
+    },
+    "relevance_notes": "Primary standard IS 14286 for terrestrial silicon solar PV panels."
+  },
+  {
+    "id": "eval_019",
+    "query": "Portable CO2 dry powder fire extinguisher for building safety",
+    "language": "en",
+    "domain": "Fire Safety",
+    "relevant_standard_ids": ["IS-15683"],
+    "relevance": {
+      "IS-15683": 2
+    },
+    "relevance_notes": "Primary standard IS 15683 for portable fire extinguishers."
+  },
+  {
+    "id": "eval_020",
+    "query": "Hot rolled high tensile structural steel beams for bridge construction",
+    "language": "en",
+    "domain": "Structural Steel",
+    "relevant_standard_ids": ["IS-2062"],
+    "relevance": {
+      "IS-2062": 2
+    },
+    "relevance_notes": "Primary standard IS 2062 for hot rolled structural steel sections."
+  }
+]
