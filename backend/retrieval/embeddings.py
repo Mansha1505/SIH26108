@@ -20,7 +20,7 @@ except Exception:
 
 import numpy as np
 from typing import List, Dict, Any, Tuple, Optional
-from backend.config import DEFAULT_EMBEDDING_MODEL, MULTILINGUAL_FALLBACK_MODELS
+from backend.config import DEFAULT_EMBEDDING_MODEL, DEFAULT_EMBEDDING_DIMENSION, MULTILINGUAL_FALLBACK_MODELS
 from backend.retrieval.text_prep import prepare_document_text, normalize_text
 from backend.utils.logger import get_logger
 
@@ -34,16 +34,46 @@ class SemanticEmbeddingEngine:
     Computes vector embeddings for standard documents and query vector cosine similarities.
     Supports configurable models (e.g. BAAI/bge-m3, paraphrase-multilingual-MiniLM-L12-v2),
     dynamic vector dimensionality detection, and graceful fallbacks.
+    Loads PyTorch model lazily on demand to preserve startup memory on small instances.
     """
     def __init__(self, standards: List[Dict[str, Any]], model_name: Optional[str] = None):
         self.standards = standards
         self.model_name = model_name or DEFAULT_EMBEDDING_MODEL
-        self.model = None
-        self.doc_embeddings = None
-        self.vector_dimension: int = 0
+        self._model = None
+        self._doc_embeddings = None
+        self.vector_dimension: int = DEFAULT_EMBEDDING_DIMENSION
         self.active_model_name: str = self.model_name
         self.is_fallback: bool = False
+        self._is_initialized: bool = False
+
+    @property
+    def model(self):
+        """SentenceTransformer model instance, lazily loaded on demand."""
+        if not self._is_initialized:
+            self.ensure_initialized()
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
+
+    @property
+    def doc_embeddings(self):
+        """Normalized document embedding matrix, lazily computed on demand."""
+        if not self._is_initialized:
+            self.ensure_initialized()
+        return self._doc_embeddings
+
+    @doc_embeddings.setter
+    def doc_embeddings(self, value):
+        self._doc_embeddings = value
+
+    def ensure_initialized(self):
+        """Lazily initializes sentence transformer embeddings on demand."""
+        if self._is_initialized:
+            return
         self._init_embeddings()
+        self._is_initialized = True
 
     def _init_embeddings(self):
         """Initializes dense sentence transformer embeddings with multi-tier fallback strategy."""
@@ -70,8 +100,8 @@ class SemanticEmbeddingEngine:
                 norms[norms == 0] = 1.0
                 normalized_embeddings = embeddings / norms
                 
-                self.model = model
-                self.doc_embeddings = normalized_embeddings
+                self._model = model
+                self._doc_embeddings = normalized_embeddings
                 self.active_model_name = candidate
                 self.vector_dimension = int(normalized_embeddings.shape[1])
                 self.is_fallback = (candidate != self.model_name)
@@ -89,13 +119,15 @@ class SemanticEmbeddingEngine:
             logger.warning("All SentenceTransformer models failed. Falling back to TF-IDF vector similarity.")
             self._init_tfidf_fallback()
 
+        self._is_initialized = True
+
     def _init_tfidf_fallback(self):
         """Fallback TF-IDF vector encoder if SentenceTransformers cannot be loaded."""
         from sklearn.feature_extraction.text import TfidfVectorizer
         doc_texts = [prepare_document_text(std) for std in self.standards]
         self.vectorizer = TfidfVectorizer(ngram_range=(1, 2))
-        self.doc_embeddings = self.vectorizer.fit_transform(doc_texts).toarray()
-        self.vector_dimension = int(self.doc_embeddings.shape[1])
+        self._doc_embeddings = self.vectorizer.fit_transform(doc_texts).toarray()
+        self.vector_dimension = int(self._doc_embeddings.shape[1])
         self.active_model_name = "TF-IDF Fallback"
         self.is_fallback = True
         logger.info(f"Initialized TF-IDF fallback vectorizer with dimension={self.vector_dimension}.")
@@ -109,26 +141,28 @@ class SemanticEmbeddingEngine:
         if not query or not query.strip():
             return [(idx, 0.0) for idx in range(len(self.standards))]
 
-        if self.model is not None and self.doc_embeddings is not None:
-            query_emb = self.model.encode([query], convert_to_numpy=True)
+        self.ensure_initialized()
+
+        if self._model is not None and self._doc_embeddings is not None:
+            query_emb = self._model.encode([query], convert_to_numpy=True)
             norm = np.linalg.norm(query_emb)
             if norm > 0:
                 query_emb = query_emb / norm
             
             # Cosine similarity matrix multiplication
-            sims = np.dot(self.doc_embeddings, query_emb.T).flatten()
+            sims = np.dot(self._doc_embeddings, query_emb.T).flatten()
             
             # Clip similarities to [0.0, 1.0] range
             sims = np.clip(sims, 0.0, 1.0)
             return [(idx, float(sims[idx])) for idx in range(len(self.standards))]
-        elif hasattr(self, "vectorizer") and self.doc_embeddings is not None:
+        elif hasattr(self, "vectorizer") and self._doc_embeddings is not None:
             query_vec = self.vectorizer.transform([query]).toarray()
             q_norm = np.linalg.norm(query_vec)
             if q_norm > 0:
                 query_vec = query_vec / q_norm
-            d_norms = np.linalg.norm(self.doc_embeddings, axis=1)
+            d_norms = np.linalg.norm(self._doc_embeddings, axis=1)
             d_norms[d_norms == 0] = 1.0
-            sims = np.dot(self.doc_embeddings, query_vec.T).flatten() / d_norms
+            sims = np.dot(self._doc_embeddings, query_vec.T).flatten() / d_norms
             sims = np.clip(sims, 0.0, 1.0)
             return [(idx, float(sims[idx])) for idx in range(len(self.standards))]
         else:
