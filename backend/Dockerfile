@@ -19,9 +19,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy and install python dependencies
+# Copy and install python dependencies (CPU-only PyTorch build for 512MB RAM & Render free-tier compatibility)
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy application source code

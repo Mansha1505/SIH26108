@@ -29,31 +29,39 @@ class CrossEncoderReranker:
     def __init__(self, model_name: Optional[str] = None):
         self.model_name = model_name or DEFAULT_CROSS_ENCODER_MODEL
         self.model = None
-        self.is_available: bool = False
+        self._is_available: bool = False
         self._is_initialized: bool = False
 
+    @property
+    def is_available(self) -> bool:
+        """Returns availability status of CrossEncoder, lazily initializing on demand if necessary."""
+        if not self._is_initialized:
+            self.initialize()
+        return self._is_available
+
     def initialize(self):
-        """Loads CrossEncoder model once at application startup."""
+        """Loads CrossEncoder model lazily on demand on CPU."""
         if self._is_initialized:
             return
 
         if not RERANK_ENABLED:
             logger.info("Cross-Encoder reranking is disabled via RERANK_ENABLED configuration.")
+            self._is_available = False
             self._is_initialized = True
             return
 
         try:
             from sentence_transformers import CrossEncoder
-            logger.info(f"Attempting to load CrossEncoder model: '{self.model_name}'...")
-            self.model = CrossEncoder(self.model_name)
-            self.is_available = True
-            logger.info(f"CrossEncoder model '{self.model_name}' loaded successfully.")
+            logger.info(f"Attempting to load CrossEncoder model on CPU: '{self.model_name}'...")
+            self.model = CrossEncoder(self.model_name, device="cpu")
+            self._is_available = True
+            logger.info(f"CrossEncoder model '{self.model_name}' loaded successfully on CPU.")
         except Exception as e:
             logger.warning(
                 f"Could not load CrossEncoder model '{self.model_name}': {e}. "
                 "Application will safely fall back to first-stage hybrid retrieval scores."
             )
-            self.is_available = False
+            self._is_available = False
 
         self._is_initialized = True
 

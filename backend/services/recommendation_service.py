@@ -65,9 +65,7 @@ class RecommendationService:
         self.embedding_engine = embedding_engine or get_default_embedding_engine(self.standards)
         self.hybrid_retriever = HybridRetriever(self.bm25_engine, self.embedding_engine, alpha=0.6)
 
-        
         self.reranker = CrossEncoderReranker()
-        self.reranker.initialize()
 
         self.graph_builder = StandardsGraphBuilder()
         self.graph_builder.build_graph(self.standards)
@@ -83,9 +81,10 @@ class RecommendationService:
         )
         
         self._is_initialized = True
+        from backend.config import RERANK_ENABLED
         logger.info(
             f"RecommendationService initialized with {len(self.standards)} standards. "
-            f"Reranker Active={self.reranker.is_available}, Graph Built={self.graph_builder._is_built}, "
+            f"Reranker Configured={RERANK_ENABLED}, Graph Built={self.graph_builder._is_built}, "
             f"Certification Rules={len(self.certification_engine.rules)}"
         )
 

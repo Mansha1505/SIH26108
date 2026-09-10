@@ -2,10 +2,18 @@ import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
 try:
     import torch
     torch.set_num_threads(1)
+    if hasattr(torch, "set_num_interop_threads"):
+        try:
+            torch.set_num_interop_threads(1)
+        except Exception:
+            pass
 except Exception:
     pass
 
@@ -50,8 +58,8 @@ class SemanticEmbeddingEngine:
 
         for candidate in candidates:
             try:
-                logger.info(f"Attempting to load SentenceTransformer embedding model: '{candidate}'...")
-                model = SentenceTransformer(candidate)
+                logger.info(f"Attempting to load SentenceTransformer embedding model on CPU: '{candidate}'...")
+                model = SentenceTransformer(candidate, device="cpu")
                 
                 doc_texts = [prepare_document_text(std) for std in self.standards]
                 logger.info(f"Encoding {len(doc_texts)} standard documents into dense embeddings with '{candidate}'...")
