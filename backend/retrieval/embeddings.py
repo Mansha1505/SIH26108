@@ -91,8 +91,10 @@ class SemanticEmbeddingEngine:
                 logger.info(f"Attempting to load SentenceTransformer embedding model on CPU: '{candidate}'...")
                 model = SentenceTransformer(candidate, device="cpu")
                 
-                doc_texts = [prepare_document_text(std) for std in self.standards]
-                logger.info(f"Encoding {len(doc_texts)} standard documents into dense embeddings with '{candidate}'...")
+                is_e5 = "e5" in candidate.lower()
+                doc_prefix = "passage: " if is_e5 else ""
+                doc_texts = [f"{doc_prefix}{prepare_document_text(std)}" for std in self.standards]
+                logger.info(f"Encoding {len(doc_texts)} standard documents into dense embeddings with '{candidate}' (is_e5={is_e5})...")
                 embeddings = model.encode(doc_texts, show_progress_bar=False, convert_to_numpy=True)
                 
                 # Normalize doc embeddings for fast cosine similarity via dot product
@@ -107,6 +109,10 @@ class SemanticEmbeddingEngine:
                 self.is_fallback = (candidate != self.model_name)
                 loaded_success = True
                 
+                import gc
+                del doc_texts, embeddings, norms
+                gc.collect()
+
                 logger.info(
                     f"Semantic doc embeddings initialized successfully using '{candidate}'. "
                     f"Vector Dimension={self.vector_dimension}, IsFallback={self.is_fallback}"
@@ -136,6 +142,7 @@ class SemanticEmbeddingEngine:
         """
         Computes cosine similarity of query embedding against document embeddings.
         Supports multilingual queries in English, Hindi (Devanagari), and Hinglish.
+        Applies standard E5 query prefix if an E5 model is active.
         Returns list of (doc_index, similarity_score) where similarity is in [0.0, 1.0].
         """
         if not query or not query.strip():
@@ -144,7 +151,9 @@ class SemanticEmbeddingEngine:
         self.ensure_initialized()
 
         if self._model is not None and self._doc_embeddings is not None:
-            query_emb = self._model.encode([query], convert_to_numpy=True)
+            is_e5 = "e5" in self.active_model_name.lower()
+            q_text = f"query: {query}" if is_e5 else query
+            query_emb = self._model.encode([q_text], convert_to_numpy=True)
             norm = np.linalg.norm(query_emb)
             if norm > 0:
                 query_emb = query_emb / norm

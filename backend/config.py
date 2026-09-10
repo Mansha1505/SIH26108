@@ -11,9 +11,10 @@ DEFAULT_EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "paraphrase-multilingual-
 DEFAULT_EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "384"))
 
 MULTILINGUAL_FALLBACK_MODELS = [
+    "intfloat/multilingual-e5-small",
     "paraphrase-multilingual-MiniLM-L12-v2",
-    "BAAI/bge-m3",
-    "all-MiniLM-L6-v2"
+    "all-MiniLM-L6-v2",
+    "BAAI/bge-m3"
 ]
 
 
