@@ -26,26 +26,36 @@ class HFInferenceQueryEncoder:
     Hugging Face Free Inference API query encoder for intfloat/multilingual-e5-small.
     Encodes query text into a 384-dimensional normalized vector via HTTP POST request.
     Does NOT import PyTorch, SentenceTransformers, Transformers, or ONNX Runtime.
+    Uses active Hugging Face Router domain (router.huggingface.co).
     """
     def __init__(self, model_name: str = "intfloat/multilingual-e5-small"):
         self.model_name = model_name
-        self.hf_token = os.getenv("HF_TOKEN", "")
-        primary_url = os.getenv(
-            "HF_EMBEDDING_API_URL",
-            f"https://api-inference.huggingface.co/pipeline/feature-extraction/{model_name}"
-        )
-        self.api_urls = [
-            primary_url,
+        self.hf_token = os.getenv("HF_TOKEN", "").strip()
+        
+        # Primary & fallback Hugging Face Router endpoints (router.huggingface.co is active; api-inference.huggingface.co is deprecated/unresolvable)
+        env_url = os.getenv("HF_EMBEDDING_API_URL", "").strip()
+        self.api_urls = []
+        if env_url:
+            self.api_urls.append(env_url)
+        
+        default_urls = [
             f"https://router.huggingface.co/hf-inference/models/{model_name}",
-            f"https://api-inference.huggingface.co/models/{model_name}"
+            f"https://router.huggingface.co/pipeline/feature-extraction/{model_name}",
+            f"https://router.huggingface.co/models/{model_name}",
+            f"https://api-inference.huggingface.co/pipeline/feature-extraction/{model_name}"
         ]
+        for u in default_urls:
+            if u not in self.api_urls:
+                self.api_urls.append(u)
+
         self._is_e5 = "e5" in model_name.lower()
 
-    def encode_query(self, query_text: str, timeout: float = 4.0) -> np.ndarray:
+    def encode_query(self, query_text: str, timeout: float = 5.0) -> np.ndarray:
         """
         Encodes query text into a 384-d normalized float32 array.
         Prefixes E5 queries with 'query: '.
         Raises RuntimeError on API failure, timeout, status error, or invalid payload.
+        Never logs sensitive auth tokens.
         """
         if not query_text or not query_text.strip():
             return np.zeros(384, dtype=np.float32)
@@ -64,14 +74,20 @@ class HFInferenceQueryEncoder:
             headers["Authorization"] = f"Bearer {self.hf_token}"
 
         last_error = None
+        has_token = bool(self.hf_token)
+        
         for url in self.api_urls:
+            host = url.split("/")[2] if "//" in url else url
             try:
                 req = urllib.request.Request(url, data=payload_bytes, headers=headers, method="POST")
                 with urllib.request.urlopen(req, timeout=timeout) as resp:
                     if resp.status != 200:
-                        raise RuntimeError(f"HF API status code {resp.status}")
+                        logger.warning(f"HF API host '{host}' returned non-200 status {resp.status} (auth_present={has_token})")
+                        raise urllib.error.HTTPError(url, resp.status, f"HTTP {resp.status}", resp.headers, None)
 
-                    data = json.loads(resp.read().decode("utf-8"))
+                    body_bytes = resp.read()
+                    data = json.loads(body_bytes.decode("utf-8"))
+                    
                     vec = None
                     if isinstance(data, list):
                         arr = np.array(data, dtype=np.float32)
@@ -83,20 +99,33 @@ class HFInferenceQueryEncoder:
                             vec = np.mean(arr[0], axis=0)
 
                     if vec is None or len(vec) != 384:
-                        raise ValueError(f"Unexpected HF response vector shape or length: {data if not isinstance(data, list) else arr.shape}")
+                        shape_desc = arr.shape if 'arr' in locals() and vec is not None else type(data)
+                        err_msg = f"Malformed HF response from '{host}': expected length 384, got {shape_desc}"
+                        logger.warning(err_msg)
+                        raise ValueError(err_msg)
 
                     vec = vec.astype(np.float32)
                     norm = np.linalg.norm(vec)
                     if norm > 0:
                         vec = vec / norm
+                    logger.info(f"Successfully retrieved 384-d vector from HF API host '{host}' (auth_present={has_token}).")
                     return vec
 
+            except urllib.error.HTTPError as he:
+                last_error = f"HTTP {he.code} from '{host}'"
+                logger.warning(f"HF API request to '{host}' failed: HTTP {he.code} (auth_present={has_token})")
+                continue
+            except urllib.error.URLError as ue:
+                reason = getattr(ue, 'reason', str(ue))
+                last_error = f"URLError from '{host}': {reason}"
+                logger.warning(f"HF API request to '{host}' failed (DNS/network issue): {reason}")
+                continue
             except Exception as e:
-                last_error = e
-                logger.debug(f"HF API call failed for '{url}': {e}")
+                last_error = f"{type(e).__name__} from '{host}': {e}"
+                logger.warning(f"HF API request to '{host}' failed: {e}")
                 continue
 
-        raise RuntimeError(f"Hugging Face Inference API query encoding failed: {last_error}")
+        raise RuntimeError(f"Hugging Face Inference API query encoding failed across endpoints: {last_error}")
 
 
 class ONNXQueryEncoder:

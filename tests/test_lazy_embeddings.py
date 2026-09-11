@@ -6,7 +6,7 @@ Verifies:
 2. Precomputed document vector artifact loading (backend/data/doc_embeddings_e5_small.npy).
 3. Document vector shape (14, 384) and normalization.
 4. HFInferenceQueryEncoder produces 384-dimensional normalized vector when HF API returns success.
-5. HF API timeout, HTTP error, or network failure triggers seamless fallback to BM25 keyword search.
+5. HF API HTTP 401/403, 429, 503, DNS failure, or malformed payload triggers seamless fallback to BM25.
 6. semantic_status metadata in RecommendationResponse accurately reflects 'hf_e5_small' vs 'fallback_bm25'.
 7. Zero PyTorch / SentenceTransformers / Transformers imports during constrained backend execution.
 8. Multilingual evaluation queries (English, Hindi Devanagari, Hinglish, Technical).
@@ -16,6 +16,7 @@ import pytest
 import os
 import sys
 import json
+import urllib.error
 import numpy as np
 from unittest.mock import patch, MagicMock
 
@@ -79,7 +80,7 @@ def test_hf_inference_api_success(monkeypatch):
         def __exit__(self, *args):
             pass
 
-    def mock_urlopen(req, timeout=4.0):
+    def mock_urlopen(req, timeout=5.0):
         return MockResponse()
 
     monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
@@ -93,12 +94,12 @@ def test_hf_inference_api_success(monkeypatch):
     np.testing.assert_allclose(norm, 1.0, rtol=1e-5)
 
 
-def test_hf_inference_api_timeout_fallback(monkeypatch):
-    """Verify HF API timeout triggers graceful fallback to BM25 without crashing."""
-    def mock_urlopen_timeout(req, timeout=4.0):
-        raise TimeoutError("HTTP request timed out after 4 seconds")
+def test_hf_inference_api_dns_network_failure(monkeypatch):
+    """Verify DNS resolution failure (<urlopen error Errno -5 / Errno 11001>) triggers graceful BM25 fallback."""
+    def mock_urlopen_dns_error(req, timeout=5.0):
+        raise urllib.error.URLError("[Errno -5] No address associated with hostname")
 
-    monkeypatch.setattr("urllib.request.urlopen", mock_urlopen_timeout)
+    monkeypatch.setattr("urllib.request.urlopen", mock_urlopen_dns_error)
 
     repo = get_default_repository()
     standards = repo.get_all_standards()
@@ -110,21 +111,70 @@ def test_hf_inference_api_timeout_fallback(monkeypatch):
     assert engine.semantic_status == "fallback_bm25"
 
 
-def test_hf_inference_api_http_error_fallback(monkeypatch):
-    """Verify HTTP 500 / 429 error triggers fallback to BM25."""
-    class MockErrorResponse:
-        status = 503
+def test_hf_inference_api_http_401_403_fallback(monkeypatch):
+    """Verify HTTP 401 Unauthorized or 403 Forbidden triggers fallback to BM25."""
+    def mock_urlopen_401(req, timeout=5.0):
+        raise urllib.error.HTTPError(req.full_url, 401, "Unauthorized", {}, None)
+
+    monkeypatch.setattr("urllib.request.urlopen", mock_urlopen_401)
+
+    repo = get_default_repository()
+    standards = repo.get_all_standards()
+
+    engine = SemanticEmbeddingEngine(standards, model_name="intfloat/multilingual-e5-small")
+    results = engine.search("safety harness")
+
+    assert len(results) == len(standards)
+    assert engine.semantic_status == "fallback_bm25"
+
+
+def test_hf_inference_api_http_429_fallback(monkeypatch):
+    """Verify HTTP 429 Too Many Requests rate limit triggers fallback to BM25."""
+    def mock_urlopen_429(req, timeout=5.0):
+        raise urllib.error.HTTPError(req.full_url, 429, "Too Many Requests", {}, None)
+
+    monkeypatch.setattr("urllib.request.urlopen", mock_urlopen_429)
+
+    repo = get_default_repository()
+    standards = repo.get_all_standards()
+
+    engine = SemanticEmbeddingEngine(standards, model_name="intfloat/multilingual-e5-small")
+    results = engine.search("safety harness")
+
+    assert len(results) == len(standards)
+    assert engine.semantic_status == "fallback_bm25"
+
+
+def test_hf_inference_api_http_503_fallback(monkeypatch):
+    """Verify HTTP 503 Service Unavailable / Model Loading triggers fallback to BM25."""
+    def mock_urlopen_503(req, timeout=5.0):
+        raise urllib.error.HTTPError(req.full_url, 503, "Model is loading", {}, None)
+
+    monkeypatch.setattr("urllib.request.urlopen", mock_urlopen_503)
+
+    repo = get_default_repository()
+    standards = repo.get_all_standards()
+
+    engine = SemanticEmbeddingEngine(standards, model_name="intfloat/multilingual-e5-small")
+    results = engine.search("safety harness")
+
+    assert len(results) == len(standards)
+    assert engine.semantic_status == "fallback_bm25"
+
+
+def test_hf_inference_api_malformed_response_fallback(monkeypatch):
+    """Verify malformed payload response (unexpected vector dimension) triggers fallback to BM25."""
+    class MockMalformedResponse:
+        status = 200
         def read(self):
-            return b'{"error": "Model is loading"}'
+            # Invalid vector dimension 128 instead of 384
+            return json.dumps([[0.1] * 128]).encode("utf-8")
         def __enter__(self):
             return self
         def __exit__(self, *args):
             pass
 
-    def mock_urlopen_error(req, timeout=4.0):
-        return MockErrorResponse()
-
-    monkeypatch.setattr("urllib.request.urlopen", mock_urlopen_error)
+    monkeypatch.setattr("urllib.request.urlopen", lambda req, timeout=5.0: MockMalformedResponse())
 
     repo = get_default_repository()
     standards = repo.get_all_standards()
@@ -151,7 +201,7 @@ def test_recommendation_service_semantic_status_metadata(monkeypatch):
         def __exit__(self, *args):
             pass
 
-    monkeypatch.setattr("urllib.request.urlopen", lambda req, timeout=4.0: MockResponse())
+    monkeypatch.setattr("urllib.request.urlopen", lambda req, timeout=5.0: MockResponse())
 
     repo = get_default_repository()
     service = RecommendationService(repository=repo)
@@ -212,7 +262,7 @@ def test_multilingual_benchmark_queries_semantic(query_text, expected_is_substri
         def __exit__(self, *args):
             pass
 
-    monkeypatch.setattr("urllib.request.urlopen", lambda req, timeout=4.0: MockResponse())
+    monkeypatch.setattr("urllib.request.urlopen", lambda req, timeout=5.0: MockResponse())
 
     service = RecommendationService(repository=repo)
     service.initialize()
@@ -238,7 +288,7 @@ def test_multilingual_benchmark_queries_fallback(query_text, lang_label, monkeyp
     """Verify that when HF API is offline/unavailable, fallback to BM25 works cleanly without crashing and sets semantic_status='fallback_bm25'."""
     monkeypatch.setattr("backend.retrieval.reranker.RERANK_ENABLED", False)
 
-    def mock_urlopen_error(req, timeout=4.0):
+    def mock_urlopen_error(req, timeout=5.0):
         raise TimeoutError("HF API Offline")
 
     monkeypatch.setattr("urllib.request.urlopen", mock_urlopen_error)
