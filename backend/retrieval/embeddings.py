@@ -72,6 +72,8 @@ class HFInferenceQueryEncoder:
         }
         if self.hf_token:
             headers["Authorization"] = f"Bearer {self.hf_token}"
+        else:
+            logger.info("HF_TOKEN environment variable is not set. Hugging Face Router requires HF_TOKEN for Serverless Inference API.")
 
         last_error = None
         has_token = bool(self.hf_token)
@@ -112,8 +114,17 @@ class HFInferenceQueryEncoder:
                     return vec
 
             except urllib.error.HTTPError as he:
-                last_error = f"HTTP {he.code} from '{host}'"
-                logger.warning(f"HF API request to '{host}' failed: HTTP {he.code} (auth_present={has_token})")
+                if he.code == 401:
+                    last_error = f"HTTP 401 Unauthorized from '{host}' (HF_TOKEN missing or invalid on Render environment)"
+                elif he.code == 403:
+                    last_error = f"HTTP 403 Forbidden from '{host}' (HF_TOKEN permissions issue)"
+                elif he.code == 429:
+                    last_error = f"HTTP 429 Rate Limit from '{host}'"
+                elif he.code == 503:
+                    last_error = f"HTTP 503 Model Loading from '{host}'"
+                else:
+                    last_error = f"HTTP {he.code} from '{host}'"
+                logger.warning(f"HF API request to '{host}' failed: {last_error}")
                 continue
             except urllib.error.URLError as ue:
                 reason = getattr(ue, 'reason', str(ue))
