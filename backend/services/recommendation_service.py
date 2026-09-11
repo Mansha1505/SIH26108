@@ -7,6 +7,7 @@ from backend.retrieval.hybrid import HybridRetriever
 from backend.retrieval.reranker import CrossEncoderReranker
 from backend.retrieval.ranking import CandidateRanker
 from backend.retrieval.query_builder import build_retrieval_query
+from backend.retrieval.query_expansion import expand_procurement_query
 from backend.intelligence.standards_graph import StandardsGraphBuilder
 from backend.intelligence.certification_rules import CertificationRuleEngine
 from backend.intelligence.llm_explainer import ExplanationEngine
@@ -102,10 +103,15 @@ class RecommendationService:
             )
 
         query_str = request.query or ""
-        logger.info(f"Processing raw query recommendation request: '{query_str}' (top_k={request.top_k})")
+        retrieval_query = expand_procurement_query(query_str)
+        logger.info(f"Processing raw query recommendation request: '{query_str}' (expanded: '{retrieval_query}', top_k={request.top_k})")
         
         # 1. First-Stage: Retrieve hybrid candidate scores (Min-Max normalized BM25 + Semantic fusion)
-        candidate_scores = self.hybrid_retriever.get_candidate_scores(query_str)
+        # BM25 uses expanded query for Hindi/Devanagari keyword matching; Semantic uses original query string
+        candidate_scores = self.hybrid_retriever.get_candidate_scores(
+            query=retrieval_query,
+            semantic_query=query_str
+        )
         
         # 2. Second-Stage: Apply Cross-Encoder candidate pool reranking (if available)
         reranked_candidates = self.reranker.rerank(

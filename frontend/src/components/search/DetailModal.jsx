@@ -19,7 +19,7 @@ export default function DetailModal({ item, onClose }) {
                 {item.is_number}
               </span>
               <StatusBadge status={item.status} />
-              <RelevanceScore score={item.relevance_score} />
+              <RelevanceScore item={item} score={item.relevance_score} />
             </div>
             <h2 className="text-lg font-bold text-slate-900 leading-snug">{item.title}</h2>
           </div>

@@ -29,7 +29,7 @@ export default function RecommendationCard({ item, rank, onViewDetails }) {
 
           <div className="flex items-center space-x-2">
             <StatusBadge status={item.status} />
-            <RelevanceScore score={item.relevance_score} />
+            <RelevanceScore item={item} score={item.relevance_score} />
           </div>
         </div>
 

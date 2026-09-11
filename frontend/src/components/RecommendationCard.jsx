@@ -2,8 +2,12 @@ import React from 'react';
 import { BookOpen, CheckCircle2, Tag, Calendar, ChevronRight, ShieldAlert } from 'lucide-react';
 
 export default function RecommendationCard({ item, rank, onViewDetails }) {
-  // Score color formatting
-  const scorePercent = Math.round(item.relevance_score * 100);
+  // Score formatting
+  const relVal = item?.relative_match_score;
+  const scorePercent = relVal !== undefined && relVal !== null 
+    ? Math.round(relVal) 
+    : Math.round((item.relevance_score || 0) * 100);
+
   let scoreBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
   if (scorePercent < 50) {
     scoreBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
@@ -15,7 +19,7 @@ export default function RecommendationCard({ item, rank, onViewDetails }) {
     <div className="bg-slate-900/90 border border-slate-800 hover:border-slate-700/80 rounded-xl p-5 shadow-lg transition-all duration-200 hover:shadow-brand-900/20 group relative flex flex-col justify-between">
       
       <div>
-        {/* Header Badges: Rank, IS Number, Relevance Score */}
+        {/* Header Badges: Rank, IS Number, Relative Match Score */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="flex items-center space-x-2">
             <span className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-300">
@@ -33,8 +37,11 @@ export default function RecommendationCard({ item, rank, onViewDetails }) {
           </div>
 
           <div className="flex items-center space-x-2">
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${scoreBadgeClass}`}>
-              Relevance: {scorePercent}%
+            <span 
+              className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${scoreBadgeClass}`}
+              title="Relative match score indicates how strongly this result matches the current query compared with other returned candidates. It is not a legal compliance or accuracy guarantee."
+            >
+              Relative Match Score: {scorePercent}%
             </span>
           </div>
         </div>

@@ -36,7 +36,7 @@ class RecommendationRequest(BaseModel):
     top_k: int = Field(
         default=5,
         ge=1,
-        le=20,
+        le=100,
         description="Maximum number of recommended Indian Standards to return."
     )
 
@@ -159,6 +159,12 @@ class RecommendationItem(BaseModel):
         ge=0.0,
         le=1.0,
         description="AI-assisted hybrid relevance score in range [0.0, 1.0]. Not a legal confidence probability."
+    )
+    relative_match_score: Optional[float] = Field(
+        None,
+        ge=0.0,
+        le=100.0,
+        description="User-facing relative match score percentage relative to top candidate in returned set [0.0, 100.0]."
     )
     hybrid_score: Optional[float] = Field(None, description="First-stage hybrid retrieval score (BM25 + Semantic)")
     cross_encoder_score: Optional[float] = Field(None, description="Second-stage Cross-Encoder deep relevance score")
@@ -312,6 +318,7 @@ class StandardEvidence(BaseModel):
     matched_keywords: List[str] = Field(default_factory=list, description="Keywords matching the query")
     matched_technical_requirements: List[Dict[str, str]] = Field(default_factory=list, description="Technical requirements matching query")
     relevance_score: float = Field(..., description="AI hybrid relevance score")
+    relative_match_score: Optional[float] = Field(None, description="User-facing relative match score percentage")
     hybrid_score: Optional[float] = Field(None, description="First-stage hybrid score")
     cross_encoder_score: Optional[float] = Field(None, description="Second-stage Cross-Encoder score")
     amendments: List[Dict[str, Any]] = Field(default_factory=list, description="Recorded amendments")

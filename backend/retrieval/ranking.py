@@ -33,10 +33,15 @@ class CandidateRanker:
         Sorts candidates by final relevance_score, selects top_k, adds deterministic metadata reasons,
         attaches version & amendment intelligence, graph relationships, and certification assessments.
         """
+        # Validate/clamp top_k
+        clamped_top_k = max(1, min(int(top_k or 5), len(self.standards)))
+
         # Sort candidates descending by final relevance score
         sorted_candidates = sorted(candidates, key=lambda x: x["relevance_score"], reverse=True)
-        top_candidates = sorted_candidates[:top_k]
+        top_candidates = sorted_candidates[:clamped_top_k]
         
+        max_raw_score = top_candidates[0]["relevance_score"] if top_candidates else 0.0
+
         query_tokens = set(tokenize_text(query))
         query_norm = normalize_text(query)
         
@@ -44,7 +49,13 @@ class CandidateRanker:
         for item in top_candidates:
             doc_idx = item["doc_index"]
             std = self.standards[doc_idx]
-            
+            raw_score = float(item["relevance_score"])
+
+            if max_raw_score > 1e-9:
+                rel_score = round((raw_score / max_raw_score) * 100.0)
+            else:
+                rel_score = 0.0
+
             # Analyze version, revision, and amendment intelligence
             version_intel = self.version_analyzer.analyze(std)
             
@@ -83,7 +94,8 @@ class CandidateRanker:
                 "description": std.get("description"),
                 "amendments": std.get("amendments", []),
                 "related_standards": std.get("related_standards", []),
-                "relevance_score": item["relevance_score"],
+                "relevance_score": raw_score,
+                "relative_match_score": float(rel_score),
                 "hybrid_score": item.get("hybrid_score"),
                 "cross_encoder_score": item.get("cross_encoder_norm"),
                 "reasons": reasons,

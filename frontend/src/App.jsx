@@ -7,9 +7,15 @@ import NetworkPage from './pages/NetworkPage';
 import AmendmentsPage from './pages/AmendmentsPage';
 import CertificationPage from './pages/CertificationPage';
 import ReportsPage from './pages/ReportsPage';
+import LoginPage from './pages/LoginPage';
+import { DEMO_AUTH_CONFIG } from './config/authConfig';
 import { recommendStandards, recommendFromRequirements, checkHealth } from './services/api';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return Boolean(sessionStorage.getItem(DEMO_AUTH_CONFIG.sessionKey));
+  });
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [healthInfo, setHealthInfo] = useState(null);
 
@@ -27,6 +33,15 @@ export default function App() {
       .then((data) => setHealthInfo(data))
       .catch((err) => console.warn('Could not reach backend health check endpoint:', err));
   }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem(DEMO_AUTH_CONFIG.sessionKey);
+    setIsAuthenticated(false);
+  };
+
+  if (!isAuthenticated) {
+    return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
 
   const handleSearch = async (searchQuery, kVal = topK) => {
     if (!searchQuery.trim()) return;
@@ -80,7 +95,7 @@ export default function App() {
   };
 
   return (
-    <AppShell activeTab={activeTab} setActiveTab={setActiveTab} healthInfo={healthInfo}>
+    <AppShell activeTab={activeTab} setActiveTab={setActiveTab} healthInfo={healthInfo} onLogout={handleLogout}>
       {activeTab === 'dashboard' && (
         <DashboardPage
           onNavigate={handleNavigate}

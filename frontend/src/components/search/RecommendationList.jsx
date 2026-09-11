@@ -21,7 +21,7 @@ export default function RecommendationList({ responseData, onViewDetails }) {
           </h2>
         </div>
         <div className="text-xs text-slate-600">
-          Evaluated <span className="font-bold text-slate-900">{total_candidates}</span> demo standards • Showing top <span className="font-bold text-slate-900">{recommendations.length}</span> candidates
+          Showing top <span className="font-bold text-slate-900">{recommendations.length}</span> candidates (evaluated {total_candidates} demo standards)
         </div>
       </div>
 

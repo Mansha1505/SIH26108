@@ -3,10 +3,10 @@ import Header from './Header';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-export default function AppShell({ activeTab, setActiveTab, healthInfo, children }) {
+export default function AppShell({ activeTab, setActiveTab, healthInfo, onLogout, children }) {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
-      <Header healthInfo={healthInfo} />
+      <Header healthInfo={healthInfo} onLogout={onLogout} />
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}

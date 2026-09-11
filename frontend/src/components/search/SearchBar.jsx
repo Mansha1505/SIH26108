@@ -3,24 +3,32 @@ import { Search, Sparkles, X, SlidersHorizontal } from 'lucide-react';
 
 const SAMPLE_PROMPTS = [
   "50W LED street light for outdoor municipal roads",
+  "कृषि के लिए सबमर्सिबल पानी का पंप",
   "Portland Slag Cement for structural foundation work",
+  "kheti ke liye submersible water pump",
   "Submersible pump set for agricultural water supply",
   "Crosslinked polyethylene XLPE insulated power cables 1100V",
-  "High Density Polyethylene (HDPE) pipes for water supply",
-  "Crystalline Silicon PV Modules for solar power plant",
 ];
 
 export default function SearchBar({ query, setQuery, topK, setTopK, onSearch, isLoading }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (query.trim() && !isLoading) {
-      onSearch(query, topK);
+      onSearch(query, parseInt(topK, 10));
     }
   };
 
   const handleChipClick = (prompt) => {
     setQuery(prompt);
-    onSearch(prompt, topK);
+    onSearch(prompt, parseInt(topK, 10));
+  };
+
+  const handleTopKChange = (e) => {
+    const val = parseInt(e.target.value, 10);
+    setTopK(val);
+    if (query.trim() && !isLoading) {
+      onSearch(query, val);
+    }
   };
 
   return (
@@ -36,7 +44,7 @@ export default function SearchBar({ query, setQuery, topK, setTopK, onSearch, is
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Enter product description or specification query (e.g., '50W LED street light for outdoor municipal roads')..."
+            placeholder="Enter product description in English, Hindi (हिंदी) or Hinglish (e.g. 'कृषि के लिए सबमर्सिबल पानी का पंप')..."
             className="w-full pl-12 pr-32 py-3 bg-slate-50 border border-slate-300 rounded-md text-slate-900 placeholder-slate-500 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-govnavy-800 focus:border-govnavy-800 transition-all"
             disabled={isLoading}
           />
@@ -91,12 +99,12 @@ export default function SearchBar({ query, setQuery, topK, setTopK, onSearch, is
             <select
               id="top-k-select"
               value={topK}
-              onChange={(e) => setTopK(e.target.value)}
+              onChange={handleTopKChange}
               className="bg-transparent text-slate-900 font-semibold focus:outline-none cursor-pointer text-xs"
             >
-              <option value="3">Top 3</option>
-              <option value="5">Top 5</option>
-              <option value="10">Top 10</option>
+              <option value={3}>Top 3</option>
+              <option value={5}>Top 5</option>
+              <option value={10}>Top 10</option>
             </select>
           </div>
 
