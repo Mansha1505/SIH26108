@@ -1,7 +1,7 @@
 # Render Blueprint Configuration for SIH26108 Project
 # Target: Render $0 Free Tier ONLY
 # Backend: FastAPI Web Service (512 MB RAM / 0.1 CPU limit)
-# Frontend: React Vite Static Site
+# Frontend: React Vite Static Site (type: web, runtime: static)
 
 services:
   - type: web
@@ -24,9 +24,9 @@ services:
       - key: HF_TOKEN
         sync: false
 
-  - type: static
+  - type: web
     name: sih26108-frontend
-    plan: free
+    runtime: static
     region: singapore
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
