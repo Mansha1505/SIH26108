@@ -7,7 +7,7 @@ import os
 # -------------------------------------------------------------
 # Default Production Model: paraphrase-multilingual-MiniLM-L12-v2 (384 dimensions, 50+ languages, fast & lightweight)
 # Primary Heavy Multilingual Candidate: BAAI/bge-m3 (1024 dimensions, 100+ languages)
-DEFAULT_EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "paraphrase-multilingual-MiniLM-L12-v2")
+DEFAULT_EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "intfloat/multilingual-e5-small")
 DEFAULT_EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "384"))
 
 MULTILINGUAL_FALLBACK_MODELS = [

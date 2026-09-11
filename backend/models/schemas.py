@@ -223,6 +223,10 @@ class RecommendationResponse(BaseModel):
     recommendations: List[RecommendationItem] = Field(..., description="Ranked list of recommended standards")
     total_candidates: int = Field(..., description="Total standards evaluated in demo corpus")
     reranking_enabled: bool = Field(default=False, description="Flag indicating if Cross-Encoder reranking stage was applied")
+    semantic_status: str = Field(
+        default="hf_e5_small",
+        description="Status of semantic inference ('hf_e5_small' or 'fallback_bm25')"
+    )
     disclaimer: str = Field(
         default="DISCLAIMER: This system provides AI-assisted recommendation scores for demo/sample Indian Standards records. It is NOT a legal compliance engine and recommendations are not legally binding.",
         description="System positioning and legal disclaimer notice."

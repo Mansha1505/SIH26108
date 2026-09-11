@@ -122,11 +122,13 @@ class RecommendationService:
         )
         
         # 4. Format response
+        sem_status = getattr(self.embedding_engine, "semantic_status", "fallback_bm25") if self.embedding_engine else "fallback_bm25"
         return RecommendationResponse(
             query=query_str,
             recommendations=recommendations,
             total_candidates=len(self.standards),
-            reranking_enabled=self.reranker.is_available
+            reranking_enabled=self.reranker.is_available,
+            semantic_status=sem_status
         )
 
     def recommend_from_requirements(self, request: StructuredRecommendationRequest) -> RecommendationResponse:
@@ -164,11 +166,13 @@ class RecommendationService:
         )
 
         # 5. Format response
+        sem_status = getattr(self.embedding_engine, "semantic_status", "fallback_bm25") if self.embedding_engine else "fallback_bm25"
         return RecommendationResponse(
             query=structured_query.display_query,
             recommendations=recommendations,
             total_candidates=len(self.standards),
-            reranking_enabled=self.reranker.is_available
+            reranking_enabled=self.reranker.is_available,
+            semantic_status=sem_status
         )
 
     def explain_recommendations(self, request: ExplainRecommendationRequest) -> RecommendationExplanationResponse:
